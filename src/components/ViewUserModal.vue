@@ -31,7 +31,7 @@
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-500 mb-1">CPF</label>
-            <p class="text-sm text-gray-900">{{ user.cpf }}</p>
+            <p class="text-sm text-gray-900">{{ formatCPF(user.cpf) }}</p>
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-500 mb-1">Perfil</label>
@@ -57,7 +57,7 @@
           <div class="space-y-2">
             <div v-for="addr in user.enderecos" :key="addr.id" class="p-3 bg-gray-50 rounded-lg">
               <p class="text-sm text-gray-900">{{ addr.rua }}</p>
-              <p class="text-xs text-gray-600">CEP: {{ addr.cep }}</p>
+              <p class="text-xs text-gray-600">CEP: {{ formatCEP(addr.cep) }}</p>
             </div>
           </div>
         </div>
@@ -95,5 +95,5 @@ defineProps({
 
 defineEmits(['close'])
 
-const { formatDate } = useFormatters()
+const { formatDate, formatCPF, formatCEP } = useFormatters()
 </script>
