@@ -6,6 +6,22 @@
         <p class="text-sm text-gray-600">Sistema de cadastro e gestão</p>
       </div>
 
+      <!-- Toast de Sucesso -->
+      <div
+        v-if="showSuccessToast"
+        class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slide-in"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+        <span>{{ successMessage }}</span>
+      </div>
+
       <UserFilters
         :total="pagination.total"
         @new-user="openCreateModal"
@@ -31,7 +47,6 @@
       :mode="modalMode"
       :form-data="formData"
       :selected-addresses="selectedAddresses"
-      :all-addresses="addresses"
       :errors="errors"
       :loading="loading"
       @close="closeFormModal"
@@ -51,7 +66,6 @@ import UserFormModal from './components/UserFormModal.vue'
 const api = useApi()
 
 const users = ref([])
-const addresses = ref([])
 const showViewModal = ref(false)
 const showFormModal = ref(false)
 const modalMode = ref('create')
@@ -59,6 +73,8 @@ const currentUser = ref(null)
 const viewUser = ref(null)
 const selectedAddresses = ref([])
 const errors = ref({})
+const showSuccessToast = ref(false)
+const successMessage = ref('')
 
 const pagination = ref({
   current_page: 1,
@@ -85,6 +101,14 @@ const formData = ref({
 
 const loading = computed(() => api.loading.value)
 
+const showToast = (message) => {
+  successMessage.value = message
+  showSuccessToast.value = true
+  setTimeout(() => {
+    showSuccessToast.value = false
+  }, 3000)
+}
+
 const loadUsers = async (page = 1) => {
   try {
     const data = await api.fetchUsers(page, filters.value)
@@ -99,15 +123,6 @@ const loadUsers = async (page = 1) => {
     }
   } catch (error) {
     console.error('Erro ao carregar usuários:', error)
-  }
-}
-
-const loadAddresses = async () => {
-  try {
-    const data = await api.fetchAddresses()
-    addresses.value = data || []
-  } catch (error) {
-    console.error('Erro ao carregar endereços:', error)
   }
 }
 
@@ -155,16 +170,16 @@ const openEditModal = async (userId) => {
     const data = await api.fetchUser(userId)
 
     modalMode.value = 'edit'
-    currentUser.value = data
+    currentUser.value = data.data
     formData.value = {
-      name: data.nome,
-      email: data.email,
-      cpf: data.cpf,
-      type: data.perfil,
+      name: data.data.nome,
+      email: data.data.email,
+      cpf: data.data.cpf,
+      type: data.data.perfil,
     }
 
     selectedAddresses.value =
-      data.enderecos?.map((addr) => ({
+      data.data.enderecos?.map((addr) => ({
         id: addr.id,
         rua: addr.rua,
         cep: addr.cep,
@@ -203,13 +218,14 @@ const saveUser = async ({ formData: userData, selectedAddresses: addresses }) =>
 
     if (modalMode.value === 'create') {
       await api.createUser(payload)
+      showToast('Usuário criado com sucesso!')
     } else {
       await api.updateUser(currentUser.value.id, payload)
+      showToast('Usuário atualizado com sucesso!')
     }
 
     showFormModal.value = false
     loadUsers(pagination.value.current_page)
-    loadAddresses()
   } catch (error) {
     if (error.errors) {
       errors.value = error.errors
@@ -222,6 +238,7 @@ const handleDeleteUser = async (userId) => {
 
   try {
     await api.deleteUser(userId)
+    showToast('Usuário excluído com sucesso!')
     loadUsers(pagination.value.current_page)
   } catch (error) {
     console.error('Erro ao deletar usuário:', error)
@@ -230,6 +247,22 @@ const handleDeleteUser = async (userId) => {
 
 onMounted(() => {
   loadUsers()
-  loadAddresses()
 })
 </script>
+
+<style scoped>
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+</style>

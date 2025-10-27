@@ -3,7 +3,8 @@
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1"> Nome * </label>
       <input
-        v-model="localFormData.name"
+        :value="formData.name"
+        @input="updateField('name', $event.target.value)"
         type="text"
         class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
       />
@@ -13,7 +14,8 @@
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1"> Email * </label>
       <input
-        v-model="localFormData.email"
+        :value="formData.email"
+        @input="updateField('email', $event.target.value)"
         type="email"
         class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
       />
@@ -23,8 +25,8 @@
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1"> CPF * (apenas números) </label>
       <input
-        v-model="localFormData.cpf"
-        @input="localFormData.cpf = formatCPF(localFormData.cpf)"
+        :value="formData.cpf"
+        @input="handleCPFInput"
         type="text"
         maxlength="11"
         class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
@@ -35,7 +37,8 @@
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1"> Perfil * </label>
       <select
-        v-model="localFormData.type"
+        :value="formData.type"
+        @change="updateField('type', $event.target.value)"
         class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
       >
         <option value="user">Usuário</option>
@@ -46,7 +49,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useFormatters } from '../composables/useFormatters'
 
 const props = defineProps({
@@ -64,8 +66,15 @@ const emit = defineEmits(['update:formData'])
 
 const { formatCPF } = useFormatters()
 
-const localFormData = computed({
-  get: () => props.formData,
-  set: (value) => emit('update:formData', value),
-})
+const updateField = (field, value) => {
+  emit('update:formData', {
+    ...props.formData,
+    [field]: value,
+  })
+}
+
+const handleCPFInput = (event) => {
+  const formatted = formatCPF(event.target.value)
+  updateField('cpf', formatted)
+}
 </script>

@@ -43,13 +43,13 @@
         <tbody class="divide-y divide-gray-200">
           <tr v-for="user in users" :key="user.id" class="hover:bg-gray-50 transition">
             <td class="px-4 py-3 text-sm text-gray-900">
-              {{ user.nome }}
+              {{ user.nome.length > 40 ? user.nome.slice(0, 40) + '...' : user.nome }}
             </td>
             <td class="px-4 py-3 text-sm text-gray-600">
-              {{ user.cpf }}
+              {{ formatCPFDisplay(user.cpf) }}
             </td>
             <td class="px-4 py-3 text-sm text-gray-600">
-              {{ user.email }}
+              {{ user.email.length > 40 ? user.email.slice(0, 40) + '...' : user.email }}
             </td>
             <td class="px-4 py-3 text-sm">
               <span
@@ -152,5 +152,5 @@ defineProps({
 
 defineEmits(['view', 'edit', 'delete', 'change-page'])
 
-const { formatDate } = useFormatters()
+const { formatDate, formatCPFDisplay } = useFormatters()
 </script>

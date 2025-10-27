@@ -23,15 +23,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-gray-500 mb-1">Nome</label>
-            <p class="text-sm text-gray-900">{{ user.nome }}</p>
+            <p class="text-sm text-gray-900 break-words">{{ user.nome }}</p>
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-500 mb-1">Email</label>
-            <p class="text-sm text-gray-900">{{ user.email }}</p>
+            <p class="text-sm text-gray-900 break-words">{{ user.email }}</p>
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-500 mb-1">CPF</label>
-            <p class="text-sm text-gray-900">{{ formatCPF(user.cpf) }}</p>
+            <p class="text-sm text-gray-900">{{ formatCPFDisplay(user.cpf) }}</p>
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-500 mb-1">Perfil</label>
@@ -57,7 +57,7 @@
           <div class="space-y-2">
             <div v-for="addr in user.enderecos" :key="addr.id" class="p-3 bg-gray-50 rounded-lg">
               <p class="text-sm text-gray-900">{{ addr.rua }}</p>
-              <p class="text-xs text-gray-600">CEP: {{ formatCEP(addr.cep) }}</p>
+              <p class="text-xs text-gray-600">CEP: {{ formatCEPDisplay(addr.cep) }}</p>
             </div>
           </div>
         </div>
@@ -95,5 +95,5 @@ defineProps({
 
 defineEmits(['close'])
 
-const { formatDate, formatCPF, formatCEP } = useFormatters()
+const { formatDate, formatCPFDisplay, formatCEPDisplay } = useFormatters()
 </script>

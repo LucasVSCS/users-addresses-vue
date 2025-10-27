@@ -71,10 +71,6 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  allAddresses: {
-    type: Array,
-    default: () => [],
-  },
   errors: {
     type: Object,
     default: () => ({}),

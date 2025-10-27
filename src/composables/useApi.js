@@ -42,7 +42,10 @@ export function useApi () {
     try {
       const response = await fetch(`${API_BASE_URL}/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+          },
         body: JSON.stringify(userData)
       })
 
@@ -65,7 +68,10 @@ export function useApi () {
     try {
       const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+          },
         body: JSON.stringify(userData)
       })
 
@@ -97,16 +103,28 @@ export function useApi () {
     }
   }
 
-  const fetchAddresses = async () => {
+const fetchAddresses = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/addresses`)
-      const data = await response.json()
-      return data
+      const response = await fetch(`${API_BASE_URL}/addresses`);
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Erro ao carregar endereços:', error)
-      throw error
+      console.error('Erro ao carregar endereços:', error);
+      throw error;
     }
-  }
+  };
+
+  const searchAddresses = async (street) => {
+    try {
+      const queryParams = new URLSearchParams({ street });
+      const response = await fetch(`${API_BASE_URL}/addresses?${queryParams}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar endereços:', error);
+      throw error;
+    }
+  };
 
   return {
     loading,
@@ -115,6 +133,7 @@ export function useApi () {
     createUser,
     updateUser,
     deleteUser,
-    fetchAddresses
+    fetchAddresses,
+    searchAddresses
   }
 }
